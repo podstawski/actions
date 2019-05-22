@@ -26,6 +26,10 @@
 	
 	file_put_contents(__DIR__.'/../.log.txt',print_r(['auth:'.$pass,$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_URI'],$_REQUEST,file_get_contents('php://input'),getallheaders()],1),FILE_APPEND);
 	
+	if (!$pass) {
+		http_response_code(403);
+		die('Not authorized');
+	}
 
 	$url=PROMIENKO.$_SERVER['REQUEST_URI'];
 	
