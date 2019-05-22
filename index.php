@@ -1,26 +1,40 @@
 <?php
 
-	const TOKENS = __DIR__.'/../tokens';
+	const TOKENS = __DIR__.'/tokens';
 	const PROMIENKO = 'http://10.11.1.7:8080';
+	
+	if (isset($_REQUEST['access_token']))
+		setcookie('access_token',$_REQUEST['access_token'],time()+3600*24*30,'/');
+	
+	function checkAuth($auth_token) {
+		foreach(scandir(TOKENS) AS $token) {
+			if ($token=='.' || $token=='..')
+				continue;
+		
+			$access_token=json_decode(file_get_contents(TOKENS.'/'.$token),1);
+			
+			if ($auth_token==$access_token['access_token'])
+				return true;
+		}
+	
+		return false;
+	}
 	
 	$pass=false;
 	$contentType='';
+	
+	if (isset($_COOKIE['access_token']) && checkAuth($_COOKIE['access_token']))
+		$pass=true;
+		
+	
 	foreach( getallheaders() AS $h=>$header) {
 		if (strtolower($h)=='content-type') {
 			$contentType=$header;
 		}
 		if (strtolower($h)=='authorization') {
 			$auth_token=trim(str_replace('Bearer','',$header));
-			
-			foreach(scandir(TOKENS) AS $token) {
-				if ($token=='.' || $token=='..')
-					continue;
-			
-				$access_token=json_decode(file_get_contents(TOKENS.'/'.$token),1);
-				
-				if ($auth_token==$access_token['access_token'])
-					$pass=true;
-			}
+			if (checkAuth($auth_token))
+				$pass=true;
 		}
 	}
 	
