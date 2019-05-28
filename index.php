@@ -1,7 +1,7 @@
 <?php
 
 	const TOKENS = __DIR__.'/tokens';
-	const PROMIENKO = 'http://10.11.1.7:8080';
+	const PROMIENKO = 'http://10.11.1.1:80';
 	
 	if (isset($_REQUEST['access_token']))
 		setcookie('access_token',$_REQUEST['access_token'],time()+3600*24*30,'/');
@@ -38,7 +38,7 @@
 		}
 	}
 	
-	file_put_contents(__DIR__.'/../.log.txt',print_r(['auth:'.$pass,$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_URI'],$_REQUEST,file_get_contents('php://input'),getallheaders()],1),FILE_APPEND);
+	file_put_contents(__DIR__.'/.log.txt',print_r(['authorized:'.$pass,$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_URI'],$_REQUEST,file_get_contents('php://input'),getallheaders()],1),FILE_APPEND);
 	
 	if (!$pass) {
 		http_response_code(403);
